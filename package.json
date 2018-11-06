@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
+    "bluebird": "^3.5.3",
     "cls-bluebird": "^2.1.0",
     "debug": "^4.1.0",
     "depd": "^2.0.0",
