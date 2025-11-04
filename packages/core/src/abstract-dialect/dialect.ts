@@ -210,6 +210,14 @@ export type DialectSupports = {
    * Case-insensitive regexp operator support ('~*' in postgres).
    */
   IREGEXP: boolean;
+  /**
+   * Whether this dialect supports null-safe comparison operators.
+   * - Postgres: IS DISTINCT FROM / IS NOT DISTINCT FROM
+   * - MySQL/MariaDB: <=> (null-safe equals)
+   * - SQLite: IS / IS NOT (already null-safe)
+   * - MSSQL: IS DISTINCT FROM / IS NOT DISTINCT FROM (version 16+/2022+)
+   */
+  distinctFrom: boolean;
   /** Whether this dialect supports SQL JSON functions */
   jsonOperations: boolean;
   /** Whether this dialect supports returning quoted & unquoted JSON strings  */
@@ -449,6 +457,7 @@ export abstract class AbstractDialect<
     },
     REGEXP: false,
     IREGEXP: false,
+    distinctFrom: false,
     tmpTableTrigger: false,
     indexHints: false,
     tableHints: false,

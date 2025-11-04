@@ -84,6 +84,8 @@ export class WhereSqlBuilder {
     [Op.lt]: '<',
     [Op.is]: 'IS',
     [Op.isNot]: 'IS NOT',
+    [Op.distinctFrom]: 'IS DISTINCT FROM',
+    [Op.notDistinctFrom]: 'IS NOT DISTINCT FROM',
     [Op.in]: 'IN',
     [Op.notIn]: 'NOT IN',
     [Op.like]: 'LIKE',
@@ -412,6 +414,25 @@ export class WhereSqlBuilder {
     }
 
     return this.formatBinaryOperation(left, undefined, operator, right, undefined, options);
+  }
+
+  protected [Op.notDistinctFrom](
+    ...args: Parameters<WhereSqlBuilder[typeof Op.distinctFrom]>
+  ): string {
+    return this[Op.distinctFrom](...args);
+  }
+
+  protected [Op.distinctFrom](
+    left: Expression,
+    leftDataType: NormalizedDataType | undefined,
+    operator: symbol,
+    right: Expression,
+    rightDataType: NormalizedDataType | undefined,
+    options: FormatWhereOptions,
+  ): string {
+    // IS DISTINCT FROM is a null-safe comparison operator
+    // It works with any value types, unlike Op.is which only works with null, boolean, or literals
+    return this.formatBinaryOperation(left, leftDataType, operator, right, rightDataType, options);
   }
 
   protected [Op.notBetween](...args: Parameters<WhereSqlBuilder[typeof Op.between]>): string {

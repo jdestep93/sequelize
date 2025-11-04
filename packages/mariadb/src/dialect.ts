@@ -87,6 +87,7 @@ export class MariaDbDialect extends AbstractDialect<
       JSON: true,
     },
     REGEXP: true,
+    distinctFrom: true,
     jsonOperations: true,
     jsonExtraction: {
       unquoted: true,

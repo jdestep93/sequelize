@@ -37,6 +37,9 @@ export class MariaDbQueryGeneratorTypeScript extends AbstractQueryGenerator {
 
     internals.whereSqlBuilder.setOperatorKeyword(Op.regexp, 'REGEXP');
     internals.whereSqlBuilder.setOperatorKeyword(Op.notRegexp, 'NOT REGEXP');
+    // MariaDB null-safe equals operator
+    internals.whereSqlBuilder.setOperatorKeyword(Op.distinctFrom, 'NOT <=>');
+    internals.whereSqlBuilder.setOperatorKeyword(Op.notDistinctFrom, '<=>');
 
     this.#internals = internals;
   }

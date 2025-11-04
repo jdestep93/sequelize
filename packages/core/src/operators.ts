@@ -137,6 +137,46 @@ export interface OpTypes {
    */
   readonly eq: unique symbol;
   /**
+   * Null-safe not equal operator (Postgres & MSSQL 2022+ only)
+   *
+   * ```js
+   * [Op.distinctFrom]: 'value'
+   * ```
+   * In SQL (Postgres, MSSQL 2022+)
+   * ```sql
+   * IS DISTINCT FROM 'value'
+   * ```
+   * In SQL (MySQL, MariaDB)
+   * ```sql
+   * NOT <=> 'value'
+   * ```
+   * In SQL (SQLite)
+   * ```sql
+   * IS NOT 'value'
+   * ```
+   */
+  readonly distinctFrom: unique symbol;
+  /**
+   * Null-safe equal operator (Postgres & MSSQL 2022+ only)
+   *
+   * ```js
+   * [Op.notDistinctFrom]: 'value'
+   * ```
+   * In SQL (Postgres, MSSQL 2022+)
+   * ```sql
+   * IS NOT DISTINCT FROM 'value'
+   * ```
+   * In SQL (MySQL, MariaDB)
+   * ```sql
+   * <=> 'value'
+   * ```
+   * In SQL (SQLite)
+   * ```sql
+   * IS 'value'
+   * ```
+   */
+  readonly notDistinctFrom: unique symbol;
+  /**
    * Operator >
    *
    * ```js
@@ -563,6 +603,8 @@ export const Op: OpTypes = {
   not: Symbol.for('not'),
   is: Symbol.for('is'),
   isNot: Symbol.for('isNot'),
+  distinctFrom: Symbol.for('distinctFrom'),
+  notDistinctFrom: Symbol.for('notDistinctFrom'),
   in: Symbol.for('in'),
   notIn: Symbol.for('notIn'),
   like: Symbol.for('like'),

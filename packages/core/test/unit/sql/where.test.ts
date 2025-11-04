@@ -979,6 +979,210 @@ Caused by: "undefined" cannot be escaped`),
       );
     });
 
+    describe('Op.distinctFrom', () => {
+      // Test with integers
+      testSql(
+        { intAttr1: { [Op.distinctFrom]: 1 } },
+        {
+          postgres: '[intAttr1] IS DISTINCT FROM 1',
+          mysql: '[intAttr1] NOT <=> 1',
+          mariadb: '`intAttr1` NOT <=> 1',
+          sqlite3: '`intAttr1` IS NOT 1',
+          mssql: '[intAttr1] IS DISTINCT FROM 1',
+          ibmi: '"intAttr1" IS DISTINCT FROM 1',
+          db2: '"intAttr1" IS DISTINCT FROM 1',
+          snowflake: '"intAttr1" IS DISTINCT FROM 1',
+        },
+      );
+
+      // Test with null (should be true for non-null values)
+      testSql(
+        { nullableIntAttr: { [Op.distinctFrom]: null } },
+        {
+          postgres: '[nullableIntAttr] IS DISTINCT FROM NULL',
+          mysql: '[nullableIntAttr] NOT <=> NULL',
+          mariadb: '`nullableIntAttr` NOT <=> NULL',
+          sqlite3: '`nullableIntAttr` IS NOT NULL',
+          mssql: '[nullableIntAttr] IS DISTINCT FROM NULL',
+          ibmi: '"nullableIntAttr" IS DISTINCT FROM NULL',
+          db2: '"nullableIntAttr" IS DISTINCT FROM NULL',
+          snowflake: '"nullableIntAttr" IS DISTINCT FROM NULL',
+        },
+      );
+
+      // Test with boolean
+      testSql(
+        { booleanAttr: { [Op.distinctFrom]: true } },
+        {
+          postgres: '[booleanAttr] IS DISTINCT FROM true',
+          mysql: '[booleanAttr] NOT <=> 1',
+          mariadb: '`booleanAttr` NOT <=> 1',
+          sqlite3: '`booleanAttr` IS NOT 1',
+          mssql: '[booleanAttr] IS DISTINCT FROM 1',
+          ibmi: '"booleanAttr" IS DISTINCT FROM 1',
+          db2: '"booleanAttr" IS DISTINCT FROM 1',
+          snowflake: '"booleanAttr" IS DISTINCT FROM 1',
+        },
+      );
+
+      // Test with literal
+      testSql(
+        { intAttr1: { [Op.distinctFrom]: literal('CURRENT_VALUE') } },
+        {
+          postgres: '[intAttr1] IS DISTINCT FROM CURRENT_VALUE',
+          mysql: '[intAttr1] NOT <=> CURRENT_VALUE',
+          mariadb: '`intAttr1` NOT <=> CURRENT_VALUE',
+          sqlite3: '`intAttr1` IS NOT CURRENT_VALUE',
+          mssql: '[intAttr1] IS DISTINCT FROM CURRENT_VALUE',
+          ibmi: '"intAttr1" IS DISTINCT FROM CURRENT_VALUE',
+          db2: '"intAttr1" IS DISTINCT FROM CURRENT_VALUE',
+          snowflake: '"intAttr1" IS DISTINCT FROM CURRENT_VALUE',
+        },
+      );
+
+      // Test with col() reference
+      testSql(
+        { intAttr1: { [Op.distinctFrom]: col('intAttr2') } },
+        {
+          postgres: '[intAttr1] IS DISTINCT FROM [intAttr2]',
+          mysql: '[intAttr1] NOT <=> [intAttr2]',
+          mariadb: '`intAttr1` NOT <=> `intAttr2`',
+          sqlite3: '`intAttr1` IS NOT `intAttr2`',
+          mssql: '[intAttr1] IS DISTINCT FROM [intAttr2]',
+          ibmi: '"intAttr1" IS DISTINCT FROM "intAttr2"',
+          db2: '"intAttr1" IS DISTINCT FROM "intAttr2"',
+          snowflake: '"intAttr1" IS DISTINCT FROM "intAttr2"',
+        },
+      );
+
+      // Test with fn()
+      testSql(
+        { intAttr1: { [Op.distinctFrom]: fn('NOW') } },
+        {
+          postgres: '[intAttr1] IS DISTINCT FROM NOW()',
+          mysql: '[intAttr1] NOT <=> NOW()',
+          mariadb: '`intAttr1` NOT <=> NOW()',
+          sqlite3: '`intAttr1` IS NOT NOW()',
+          mssql: '[intAttr1] IS DISTINCT FROM NOW()',
+          ibmi: '"intAttr1" IS DISTINCT FROM NOW()',
+          db2: '"intAttr1" IS DISTINCT FROM NOW()',
+          snowflake: '"intAttr1" IS DISTINCT FROM NOW()',
+        },
+      );
+
+      testSequelizeValueMethods(Op.distinctFrom, {
+        postgres: 'IS DISTINCT FROM',
+        mysql: 'NOT <=>',
+        mariadb: 'NOT <=>',
+        sqlite3: 'IS NOT',
+        mssql: 'IS DISTINCT FROM',
+        ibmi: 'IS DISTINCT FROM',
+        db2: 'IS DISTINCT FROM',
+        snowflake: 'IS DISTINCT FROM',
+      });
+      testSupportsAnyAll(
+        Op.distinctFrom,
+        {
+          postgres: 'IS DISTINCT FROM',
+          mysql: 'NOT <=>',
+          mariadb: 'NOT <=>',
+          sqlite3: 'IS NOT',
+          mssql: 'IS DISTINCT FROM',
+          ibmi: 'IS DISTINCT FROM',
+          db2: 'IS DISTINCT FROM',
+          snowflake: 'IS DISTINCT FROM',
+        },
+        [2, 3, 4],
+      );
+    });
+
+    describe('Op.notDistinctFrom', () => {
+      // Test with integers
+      testSql(
+        { intAttr1: { [Op.notDistinctFrom]: 1 } },
+        {
+          postgres: '[intAttr1] IS NOT DISTINCT FROM 1',
+          mysql: '[intAttr1] <=> 1',
+          mariadb: '`intAttr1` <=> 1',
+          sqlite3: '`intAttr1` IS 1',
+          mssql: '[intAttr1] IS NOT DISTINCT FROM 1',
+          ibmi: '"intAttr1" IS NOT DISTINCT FROM 1',
+          db2: '"intAttr1" IS NOT DISTINCT FROM 1',
+          snowflake: '"intAttr1" IS NOT DISTINCT FROM 1',
+        },
+      );
+
+      // Test with null (should be true only for null values)
+      testSql(
+        { nullableIntAttr: { [Op.notDistinctFrom]: null } },
+        {
+          postgres: '[nullableIntAttr] IS NOT DISTINCT FROM NULL',
+          mysql: '[nullableIntAttr] <=> NULL',
+          mariadb: '`nullableIntAttr` <=> NULL',
+          sqlite3: '`nullableIntAttr` IS NULL',
+          mssql: '[nullableIntAttr] IS NOT DISTINCT FROM NULL',
+          ibmi: '"nullableIntAttr" IS NOT DISTINCT FROM NULL',
+          db2: '"nullableIntAttr" IS NOT DISTINCT FROM NULL',
+          snowflake: '"nullableIntAttr" IS NOT DISTINCT FROM NULL',
+        },
+      );
+
+      // Test with boolean
+      testSql(
+        { booleanAttr: { [Op.notDistinctFrom]: true } },
+        {
+          postgres: '[booleanAttr] IS NOT DISTINCT FROM true',
+          mysql: '[booleanAttr] <=> 1',
+          mariadb: '`booleanAttr` <=> 1',
+          sqlite3: '`booleanAttr` IS 1',
+          mssql: '[booleanAttr] IS NOT DISTINCT FROM 1',
+          ibmi: '"booleanAttr" IS NOT DISTINCT FROM 1',
+          db2: '"booleanAttr" IS NOT DISTINCT FROM 1',
+          snowflake: '"booleanAttr" IS NOT DISTINCT FROM 1',
+        },
+      );
+
+      // Test with col() reference
+      testSql(
+        { intAttr1: { [Op.notDistinctFrom]: col('intAttr2') } },
+        {
+          postgres: '[intAttr1] IS NOT DISTINCT FROM [intAttr2]',
+          mysql: '[intAttr1] <=> [intAttr2]',
+          mariadb: '`intAttr1` <=> `intAttr2`',
+          sqlite3: '`intAttr1` IS `intAttr2`',
+          mssql: '[intAttr1] IS NOT DISTINCT FROM [intAttr2]',
+          ibmi: '"intAttr1" IS NOT DISTINCT FROM "intAttr2"',
+          db2: '"intAttr1" IS NOT DISTINCT FROM "intAttr2"',
+          snowflake: '"intAttr1" IS NOT DISTINCT FROM "intAttr2"',
+        },
+      );
+
+      testSequelizeValueMethods(Op.notDistinctFrom, {
+        postgres: 'IS NOT DISTINCT FROM',
+        mysql: '<=>',
+        mariadb: '<=>',
+        sqlite3: 'IS',
+        mssql: 'IS NOT DISTINCT FROM',
+        ibmi: 'IS NOT DISTINCT FROM',
+        db2: 'IS NOT DISTINCT FROM',
+        snowflake: 'IS NOT DISTINCT FROM',
+      });
+      testSupportsAnyAll(
+        Op.notDistinctFrom,
+        {
+          postgres: 'IS NOT DISTINCT FROM',
+          mysql: '<=>',
+          mariadb: '<=>',
+          sqlite3: 'IS',
+          mssql: 'IS NOT DISTINCT FROM',
+          ibmi: 'IS NOT DISTINCT FROM',
+          db2: 'IS NOT DISTINCT FROM',
+          snowflake: 'IS NOT DISTINCT FROM',
+        },
+        [2, 3, 4],
+      );
+    });
+
     describe('Op.not', () => {
       testSql(
         { [Op.not]: {} },

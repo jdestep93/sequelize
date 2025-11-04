@@ -132,6 +132,7 @@ export class PostgresDialect extends AbstractDialect<
     },
     REGEXP: true,
     IREGEXP: true,
+    distinctFrom: true,
     searchPath: true,
     escapeStringConstants: true,
     globalTimeZoneConfig: true,

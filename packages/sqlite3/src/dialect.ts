@@ -84,6 +84,7 @@ export class SqliteDialect extends AbstractDialect<SqliteDialectOptions, SqliteC
       unquoted: false,
       quoted: false,
     },
+    distinctFrom: true,
     truncate: {
       restartIdentity: false,
     },

@@ -77,6 +77,9 @@ export class MsSqlDialect extends AbstractDialect<MsSqlDialectOptions, MsSqlConn
       unquoted: true,
       quoted: false,
     },
+    // IS DISTINCT FROM added in SQL Server 2022 (version 16)
+    // TODO: Make this conditional based on server version once we have version detection
+    distinctFrom: false,
     tableHints: true,
     removeColumn: {
       ifExists: true,

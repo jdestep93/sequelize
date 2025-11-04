@@ -317,6 +317,34 @@ export interface WhereOperators<AttributeType = any> {
   /** Example: `[Op.isNot]: null,` becomes `IS NOT NULL` */
   [Op.isNot]?: WhereOperators<AttributeType>[typeof Op.is]; // accepts the same types as Op.is
 
+  /**
+   * Null-safe not equal comparison. Unlike `Op.ne`, this operator treats NULL values distinctly.
+   * For Postgres/MSSQL 2022+: uses `IS DISTINCT FROM`
+   * For MySQL/MariaDB: uses NOT <=> (null-safe not equals)
+   * For SQLite: uses `IS NOT`
+   *
+   * @example `[Op.distinctFrom]: null` becomes `IS DISTINCT FROM NULL` (true for non-null values)
+   * @example `[Op.distinctFrom]: 5` becomes `IS DISTINCT FROM 5` (true for values != 5, including null)
+   * @example `[Op.distinctFrom]: literal('raw sql')` becomes `IS DISTINCT FROM raw sql`
+   * @example `[Op.distinctFrom]: col('column')` becomes `IS DISTINCT FROM "column"`
+   * @example `[Op.distinctFrom]: fn('NOW')` becomes `IS DISTINCT FROM NOW()`
+   */
+  [Op.distinctFrom]?: AllowAnyAll<OperatorValues<AttributeType>>;
+
+  /**
+   * Null-safe equal comparison. Unlike `Op.eq`, this operator treats NULL values as equal to NULL.
+   * For Postgres/MSSQL 2022+: uses `IS NOT DISTINCT FROM`
+   * For MySQL/MariaDB: uses <=> (null-safe equals)
+   * For SQLite: uses `IS`
+   *
+   * @example `[Op.notDistinctFrom]: null` becomes `IS NOT DISTINCT FROM NULL` (true only for null)
+   * @example `[Op.notDistinctFrom]: 5` becomes `IS NOT DISTINCT FROM 5` (true only for values == 5)
+   * @example `[Op.notDistinctFrom]: literal('raw sql')` becomes `IS NOT DISTINCT FROM raw sql`
+   * @example `[Op.notDistinctFrom]: col('column')` becomes `IS NOT DISTINCT FROM "column"`
+   * @example `[Op.notDistinctFrom]: fn('NOW')` becomes `IS NOT DISTINCT FROM NOW()`
+   */
+  [Op.notDistinctFrom]?: WhereOperators<AttributeType>[typeof Op.distinctFrom]; // accepts the same types as Op.distinctFrom
+
   /** @example `[Op.gte]: 6` becomes `>= 6` */
   [Op.gte]?: AllowAnyAll<OperatorValues<NonNullable<AttributeType>>>;
 

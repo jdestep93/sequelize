@@ -88,6 +88,7 @@ export class MySqlDialect extends AbstractDialect<MySqlDialectOptions, MySqlConn
       quoted: true,
     },
     REGEXP: true,
+    distinctFrom: true,
     uuidV1Generation: true,
     globalTimeZoneConfig: true,
     maxExecutionTimeHint: {

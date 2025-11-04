@@ -35,6 +35,9 @@ export class MySqlQueryGeneratorTypeScript extends AbstractQueryGenerator {
 
     internals.whereSqlBuilder.setOperatorKeyword(Op.regexp, 'REGEXP');
     internals.whereSqlBuilder.setOperatorKeyword(Op.notRegexp, 'NOT REGEXP');
+    // MySQL null-safe equals operator
+    internals.whereSqlBuilder.setOperatorKeyword(Op.distinctFrom, 'NOT <=>');
+    internals.whereSqlBuilder.setOperatorKeyword(Op.notDistinctFrom, '<=>');
 
     this.#internals = internals;
   }

@@ -9,7 +9,7 @@ import type {
   TableOrModel,
   TruncateTableQueryOptions,
 } from '@sequelize/core';
-import { AbstractQueryGenerator, IsolationLevel } from '@sequelize/core';
+import { AbstractQueryGenerator, IsolationLevel, Op } from '@sequelize/core';
 import {
   LIST_TABLES_QUERY_SUPPORTABLE_OPTIONS,
   REMOVE_INDEX_QUERY_SUPPORTABLE_OPTIONS,
@@ -42,6 +42,10 @@ export class SqliteQueryGeneratorTypeScript extends AbstractQueryGenerator {
     internals: SqliteQueryGeneratorInternal = new SqliteQueryGeneratorInternal(dialect),
   ) {
     super(dialect, internals);
+
+    // SQLite's IS operator is already null-safe
+    internals.whereSqlBuilder.setOperatorKeyword(Op.distinctFrom, 'IS NOT');
+    internals.whereSqlBuilder.setOperatorKeyword(Op.notDistinctFrom, 'IS');
 
     this.#internals = internals;
   }
